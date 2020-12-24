@@ -77,7 +77,7 @@ class Particle {
 function init(){
     particlesArray = [];
     let numberOfParticles = (canvas.height * canvas.width) / 9000;
-    for (let i = 0; i<numberOfParticles; i++){
+    for (let i = 0; i<numberOfParticles * 2; i++){
         let size = (Math.random() * 5) + 1;
         let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
         let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
@@ -91,6 +91,7 @@ function init(){
 
 //check if particles are close enough to draw line between them
 function connect(){
+    let opacityValue = 1;
     for (let a = 0; a < particlesArray.length; a++){
         for (let b = a; b < particlesArray.length; b++){
             let distance = ((particlesArray[a].x - particlesArray[b].x)
@@ -98,7 +99,8 @@ function connect(){
             + ((particlesArray[a].y - particlesArray[b].y) 
             * (particlesArray[a].y - particlesArray[b].y));
             if (distance < (canvas.width/7) * (canvas.height/7)){
-                context.strokeStyle = 'rgba(140,85,31,1)';
+                opacityValue = 1 - (distance/20000);
+                context.strokeStyle = 'rgba(140,85,31,' + opacityValue + ')';
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -120,6 +122,19 @@ function animate(){
     connect();
 }
 
+//resize event
+window.addEventListener('resize', function(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    mouse.radius = ((canvas.height/80) * (canvas.height/80));
+    init();
+})
+
+//mouse out event
+window.addEventListener('mouseout', function() {
+    mouse.x = undefined;
+    mouse.y = undefined;
+})
 
 init();
 animate();
