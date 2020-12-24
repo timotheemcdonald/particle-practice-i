@@ -10,7 +10,7 @@ let particlesArray;
 let mouse = {
     x: null,
     y: null,
-    radius: (canvas.height/80) * (canvas.width/80);
+    radius: (canvas.height/80) * (canvas.width/80)
 }
 
 window.addEventListener('mousemove',
@@ -89,4 +89,37 @@ function init(){
     }
 }
 
+//check if particles are close enough to draw line between them
+function connect(){
+    for (let a = 0; a < particlesArray.length; a++){
+        for (let b = a; b < particlesArray.length; b++){
+            let distance = ((particlesArray[a].x - particlesArray[b].x)
+            * (particlesArray[a].x - particlesArray[b].x))
+            + ((particlesArray[a].y - particlesArray[b].y) 
+            * (particlesArray[a].y - particlesArray[b].y));
+            if (distance < (canvas.width/7) * (canvas.height/7)){
+                context.strokeStyle = 'rgba(140,85,31,1)';
+                context.lineWidth = 1;
+                context.beginPath();
+                context.moveTo(particlesArray[a].x, particlesArray[a].y);
+                context.lineTo(particlesArray[b].x, particlesArray[b].y);
+                context.stroke();
+            }
+        }
+    }
+}
+
 //animation loop
+function animate(){
+    requestAnimationFrame(animate);
+    context.clearRect(0,0,innerWidth, innerHeight);
+
+    for (let i = 0; i <particlesArray.length; i++){
+        particlesArray[i].update();
+    }
+    connect();
+}
+
+
+init();
+animate();
